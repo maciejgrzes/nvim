@@ -34,6 +34,7 @@ require("lazy").setup({
     -- nvim-lspconfig
     {
     "neovim/nvim-lspconfig",
+    dependencies = {'saghen/blink.cmp'},
     config = function()
       local blink_ok, blink = pcall(require, "blink.cmp")
       local default_capabilities = nil
@@ -112,10 +113,10 @@ require("lazy").setup({
             keymap = { preset = 'enter' },
 
             appearance = {
+                nerd_font = true,
                 use_nvim_cmp_as_default = true,
                 nerd_font_variant = 'mono'
             },
-
             signature = { enabled = true }
         }
     },
