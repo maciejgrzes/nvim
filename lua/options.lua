@@ -1,5 +1,6 @@
 -- show line numbers
 vim.opt.number = true
+vim.opt.relativenumber = true
 
 -- highlite current line
 vim.opt.cursorline = true

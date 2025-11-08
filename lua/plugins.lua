@@ -14,6 +14,7 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
     -- theme
     { "Mofiqul/dracula.nvim" },
+    { "folke/tokyonight.nvim", lazy = false, priority = 1000, opts = {}, },
     -- auto ()
     { "windwp/nvim-autopairs", config = true },
 
@@ -30,21 +31,20 @@ require("lazy").setup({
     end,
     },
 
-    -- nvim-lspconfig (robust for both new and old APIs)
+    -- nvim-lspconfig
     {
     "neovim/nvim-lspconfig",
     config = function()
-      -- Attempt to get cmp capabilities if cmp_nvim_lsp is available
-      local cmp_ok, cmp_nvim_lsp = pcall(require, "cmp_nvim_lsp")
+      local blink_ok, blink = pcall(require, "blink.cmp")
       local default_capabilities = nil
-      if cmp_ok and cmp_nvim_lsp and type(cmp_nvim_lsp.default_capabilities) == "function" then
-        default_capabilities = cmp_nvim_lsp.default_capabilities(vim.lsp.protocol.make_client_capabilities())
+      if blink_ok and blink and blink.get_lsp_capabilities then
+        default_capabilities = blink.get_lsp_capabilities(vim.lsp.protocol.make_client_capabilities())
       end
+
 
       local function merge_opts(opts)
         opts = opts or {}
         if default_capabilities then
-          -- merge capabilities into opts, don't overwrite if already present
           opts.capabilities = vim.tbl_deep_extend("force", opts.capabilities or {}, default_capabilities)
         end
         return opts
@@ -53,7 +53,6 @@ require("lazy").setup({
       local function setup_server(name, opts)
         opts = merge_opts(opts)
 
-        -- Try new API: vim.lsp.config[name](opts)
         local ok_new, _ = pcall(function()
           if vim.lsp and vim.lsp.config and type(vim.lsp.config[name]) == "function" then
             vim.lsp.config[name](opts)
@@ -62,7 +61,6 @@ require("lazy").setup({
         end)
         if ok_new then return end
 
-        -- Fallback to old lspconfig: require("lspconfig")[name].setup(opts)
         local ok_old, lspconfig = pcall(require, "lspconfig")
         if ok_old and lspconfig[name] and type(lspconfig[name].setup) == "function" then
           lspconfig[name].setup(opts)
@@ -77,7 +75,6 @@ require("lazy").setup({
         ), vim.log.levels.WARN)
       end
 
-      -- Example server configs
       setup_server("lua_ls", {
         settings = {
           Lua = {
@@ -104,60 +101,80 @@ require("lazy").setup({
 
     -- Autocompletion
     {
-    "hrsh7th/nvim-cmp",
-    dependencies = {
-      "hrsh7th/cmp-nvim-lsp",
-      "L3MON4D3/LuaSnip",             -- Snippet engine
-      "saadparwaiz1/cmp_luasnip",     -- Snippet completion
-      "hrsh7th/cmp-buffer",           -- Buffer words
-      "hrsh7th/cmp-path",             -- File paths
-      "rafamadriz/friendly-snippets", -- Predefined snippets
+    'saghen/blink.cmp',
+        dependencies = { 'rafamadriz/friendly-snippets' },
+
+        -- use a release tag to download pre-built binaries
+        version = '1.*',
+        opts = {
+            -- 'super-tab' for mappings similar to vscode (tab to accept)
+            -- 'enter' for enter to accept
+            keymap = { preset = 'enter' },
+
+            appearance = {
+                use_nvim_cmp_as_default = true,
+                nerd_font_variant = 'mono'
+            },
+
+            signature = { enabled = true }
+        }
     },
-    config = function()
-      local cmp = require("cmp")
-      local luasnip = require("luasnip")
 
-      require("luasnip.loaders.from_vscode").lazy_load()
-
-      cmp.setup({
-        snippet = {
-          expand = function(args)
-            luasnip.lsp_expand(args.body)
-          end,
-        },
-        mapping = cmp.mapping.preset.insert({
-          ["<Tab>"] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-              cmp.select_next_item()
-            elseif luasnip.expand_or_jumpable() then
-              luasnip.expand_or_jump()
-            else
-              fallback()
-            end
-          end, { "i", "s" }),
-
-          ["<S-Tab>"] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-              cmp.select_prev_item()
-            elseif luasnip.jumpable(-1) then
-              luasnip.jump(-1)
-            else
-              fallback()
-            end
-          end, { "i", "s" }),
-
-          ["<CR>"] = cmp.mapping.confirm({ select = false }),
-          ["<C-Space>"] = cmp.mapping.complete(),
-        }),
-        sources = cmp.config.sources({
-          { name = "nvim_lsp" },
-          { name = "luasnip" },
-          { name = "buffer" },
-          { name = "path" },
-        }),
-      })
-    end,
-    },
+    -- {
+    -- "hrsh7th/nvim-cmp",
+    -- dependencies = {
+    --   "hrsh7th/cmp-nvim-lsp",
+    --   "L3MON4D3/LuaSnip",             -- Snippet engine
+    --   "saadparwaiz1/cmp_luasnip",     -- Snippet completion
+    --   "hrsh7th/cmp-buffer",           -- Buffer words
+    --   "hrsh7th/cmp-path",             -- File paths
+    --   "rafamadriz/friendly-snippets", -- Predefined snippets
+    -- },
+    -- config = function()
+    --   local cmp = require("cmp")
+    --   local luasnip = require("luasnip")
+    --
+    --   require("luasnip.loaders.from_vscode").lazy_load()
+    --
+    --   cmp.setup({
+    --     snippet = {
+    --       expand = function(args)
+    --         luasnip.lsp_expand(args.body)
+    --       end,
+    --     },
+    --     mapping = cmp.mapping.preset.insert({
+    --       ["<Tab>"] = cmp.mapping(function(fallback)
+    --         if cmp.visible() then
+    --           cmp.select_next_item()
+    --         elseif luasnip.expand_or_jumpable() then
+    --           luasnip.expand_or_jump()
+    --         else
+    --           fallback()
+    --         end
+    --       end, { "i", "s" }),
+    --
+    --       ["<S-Tab>"] = cmp.mapping(function(fallback)
+    --         if cmp.visible() then
+    --           cmp.select_prev_item()
+    --         elseif luasnip.jumpable(-1) then
+    --           luasnip.jump(-1)
+    --         else
+    --           fallback()
+    --         end
+    --       end, { "i", "s" }),
+    --
+    --       ["<CR>"] = cmp.mapping.confirm({ select = false }),
+    --       ["<C-Space>"] = cmp.mapping.complete(),
+    --     }),
+    --     sources = cmp.config.sources({
+    --       { name = "nvim_lsp" },
+    --       { name = "luasnip" },
+    --       { name = "buffer" },
+    --       { name = "path" },
+    --     }),
+    --   })
+    -- end,
+    -- },
 
     -- nvim-treesitter
     {
@@ -191,28 +208,26 @@ require("lazy").setup({
     end,
     },
 
-    -- mini indentscope
+    -- indent blankline
     {
-      "nvim-mini/mini.indentscope",
-      version = false,
-      opts = {
-        symbol = "│",
-        options = { try_as_border = true },
-      },
-      init = function()
-        vim.api.nvim_create_autocmd("FileType", {
-          pattern = { "help", "alpha", "dashboard", "neo-tree", "toggleterm" },
-          callback = function()
-            vim.b.miniindentscope_disable = true
-          end,
-        })
-      end,
+    "lukas-reineke/indent-blankline.nvim",
+        event = "BufRead",
+        setup = function()
+            vim.g.indentLine_enabled = 1
+            vim.g.indent_blankline_char = "▏"
+            vim.g.indent_blankline_filetype_exclude = { "help", "terminal", "dashboard" }
+            vim.g.indent_blankline_buftype_exclude = { "terminal" }
+            vim.g.indent_blankline_show_trailing_blankline_indent = false
+            vim.g.indent_blankline_show_first_indent_level = false
+            vim.g.indent_blankline_show_current_context = true
+            vim.g.indent_blankline_show_current_context_start = true
+        end
     },
 
     -- which-key
     {
       "folke/which-key.nvim",
-      opts = {
+        opts = {
         timeout = true,
         win = { border = "single" }
       },
