@@ -91,7 +91,7 @@ require("lazy").setup({
         setup_server("lua_ls", {
           settings = {
             Lua = {
-              diagnostics = { globals = { "vim" } },
+              diagnostics = { global = { "vim" } },
               workspace = { checkThirdParty = false },
             },
           },
