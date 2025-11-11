@@ -32,6 +32,7 @@ require("lazy").setup({
     },
 
     -- nvim-lspconfig
+
     {
       "neovim/nvim-lspconfig",
       dependencies = { "saghen/blink.cmp" },
@@ -50,6 +51,17 @@ require("lazy").setup({
             opts.capabilities =
               vim.tbl_deep_extend("force", opts.capabilities or {}, default_capabilities)
           end
+
+          local user_on_attach = opts.on_attach
+          opts.on_attach = function(client, bufnr)
+            if user_on_attach then user_on_attach(client, bufnr) end
+
+            -- Start semantic tokens if supported
+            if client.server_capabilities.semanticTokensProvider then
+              pcall(vim.lsp.semantic_tokens.start, bufnr, client.id)
+            end
+          end
+
           return opts
         end
 
@@ -78,6 +90,17 @@ require("lazy").setup({
           ), vim.log.levels.WARN)
         end
 
+        -- Highlight links for semantic tokens
+        vim.api.nvim_create_autocmd("ColorScheme", {
+          callback = function()
+            vim.api.nvim_set_hl(0, "@lsp.type.parameter.cpp", { link = "@variable.parameter" })
+            vim.api.nvim_set_hl(0, "@lsp.typemod.variable.defaultLibrary.cpp", { link = "@variable.builtin" })
+            vim.api.nvim_set_hl(0, "@lsp.type.class.cpp", { link = "@type" })
+            vim.api.nvim_set_hl(0, "@lsp.type.namespace.cpp", { link = "@namespace" })
+          end,
+        })
+
+        -- Servers
         setup_server("lua_ls", {
           settings = {
             Lua = {
@@ -98,9 +121,14 @@ require("lazy").setup({
           },
         })
 
-        setup_server("clangd", {})
+        setup_server("clangd", {
+          cmd = { "clangd" },
+          filetypes = { "c", "cpp", "objc", "objcpp" },
+          init_options = { clangdFileStatus = true, semanticHighlighting = true },
+        })
       end,
     },
+
 
     -- Autocompletion
     {
