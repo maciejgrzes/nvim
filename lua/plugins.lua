@@ -50,16 +50,6 @@ require("lazy").setup({
             opts.capabilities =
               vim.tbl_deep_extend("force", opts.capabilities or {}, default_capabilities)
           end
-
-          local user_on_attach = opts.on_attach
-          opts.on_attach = function(client, bufnr)
-            if user_on_attach then user_on_attach(client, bufnr) end
-
-            if client.server_capabilities.semanticTokensProvider then
-              vim.lsp.semantic_tokens.start(bufnr, client.id)
-            end
-          end
-
           return opts
         end
 
@@ -91,7 +81,7 @@ require("lazy").setup({
         setup_server("lua_ls", {
           settings = {
             Lua = {
-              diagnostics = { global = { "vim" } },
+              diagnostics = { globals = { "vim" } },
               workspace = { checkThirdParty = false },
             },
           },
@@ -108,17 +98,9 @@ require("lazy").setup({
           },
         })
 
-        setup_server("clangd", {
-          cmd = { "clangd" },
-          filetypes = { "c", "cpp", "objc", "objcpp" },
-          init_options = {
-            clangdFileStatus = true,
-            semanticHighlighting = true,
-          },
-        })
+        setup_server("clangd", {})
       end,
     },
-
 
     -- Autocompletion
     {
