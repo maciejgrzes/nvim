@@ -33,72 +33,92 @@ require("lazy").setup({
 
     -- nvim-lspconfig
     {
-    "neovim/nvim-lspconfig",
-    dependencies = {'saghen/blink.cmp'},
-    config = function()
-      local blink_ok, blink = pcall(require, "blink.cmp")
-      local default_capabilities = nil
-      if blink_ok and blink and blink.get_lsp_capabilities then
-        default_capabilities = blink.get_lsp_capabilities(vim.lsp.protocol.make_client_capabilities())
-      end
+      "neovim/nvim-lspconfig",
+      dependencies = { "saghen/blink.cmp" },
+      config = function()
+        local blink_ok, blink = pcall(require, "blink.cmp")
+        local default_capabilities = nil
 
-
-      local function merge_opts(opts)
-        opts = opts or {}
-        if default_capabilities then
-          opts.capabilities = vim.tbl_deep_extend("force", opts.capabilities or {}, default_capabilities)
+        if blink_ok and blink and blink.get_lsp_capabilities then
+          default_capabilities =
+            blink.get_lsp_capabilities(vim.lsp.protocol.make_client_capabilities())
         end
-        return opts
-      end
 
-      local function setup_server(name, opts)
-        opts = merge_opts(opts)
-
-        local ok_new, _ = pcall(function()
-          if vim.lsp and vim.lsp.config and type(vim.lsp.config[name]) == "function" then
-            vim.lsp.config[name](opts)
-            return true
+        local function merge_opts(opts)
+          opts = opts or {}
+          if default_capabilities then
+            opts.capabilities =
+              vim.tbl_deep_extend("force", opts.capabilities or {}, default_capabilities)
           end
-        end)
-        if ok_new then return end
 
-        local ok_old, lspconfig = pcall(require, "lspconfig")
-        if ok_old and lspconfig[name] and type(lspconfig[name].setup) == "function" then
-          lspconfig[name].setup(opts)
-          return
+          local user_on_attach = opts.on_attach
+          opts.on_attach = function(client, bufnr)
+            if user_on_attach then user_on_attach(client, bufnr) end
+
+            if client.server_capabilities.semanticTokensProvider then
+              vim.lsp.semantic_tokens.start(bufnr, client.id)
+            end
+          end
+
+          return opts
         end
 
-        vim.notify(string.format(
-          "[lsp-config] failed to configure %s: new API present=%s, lspconfig present=%s",
-          name,
-          tostring(vim.lsp and vim.lsp.config and type(vim.lsp.config[name]) == "function"),
-          tostring(ok_old)
-        ), vim.log.levels.WARN)
-      end
+        local function setup_server(name, opts)
+          opts = merge_opts(opts)
 
-      setup_server("lua_ls", {
-        settings = {
-          Lua = {
-            diagnostics = { globals = { "vim" } },
-            workspace = { checkThirdParty = false },
-          },
-        },
-      })
+          local ok_new, _ = pcall(function()
+            if vim.lsp and vim.lsp.config and type(vim.lsp.config[name]) == "function" then
+              vim.lsp.config[name](opts)
+              return true
+            end
+          end)
+          if ok_new then return end
 
-      setup_server("pylsp", {
-        settings = {
-          pylsp = {
-            plugins = {
-              pyflakes = { enabled = true },
-              pycodestyle = { enabled = false },
+          local ok_old, lspconfig = pcall(require, "lspconfig")
+          if ok_old and lspconfig[name] and type(lspconfig[name].setup) == "function" then
+            lspconfig[name].setup(opts)
+            return
+          end
+
+          vim.notify(string.format(
+            "[lsp-config] failed to configure %s: new API present=%s, lspconfig present=%s",
+            name,
+            tostring(vim.lsp and vim.lsp.config and type(vim.lsp.config[name]) == "function"),
+            tostring(ok_old)
+          ), vim.log.levels.WARN)
+        end
+
+        setup_server("lua_ls", {
+          settings = {
+            Lua = {
+              diagnostics = { globals = { "vim" } },
+              workspace = { checkThirdParty = false },
             },
           },
-        },
-      })
+        })
 
-      setup_server("clangd", {})
-    end,
+        setup_server("pylsp", {
+          settings = {
+            pylsp = {
+              plugins = {
+                pyflakes = { enabled = true },
+                pycodestyle = { enabled = false },
+              },
+            },
+          },
+        })
+
+        setup_server("clangd", {
+          cmd = { "clangd" },
+          filetypes = { "c", "cpp", "objc", "objcpp" },
+          init_options = {
+            clangdFileStatus = true,
+            semanticHighlighting = true,
+          },
+        })
+      end,
     },
+
 
     -- Autocompletion
     {
