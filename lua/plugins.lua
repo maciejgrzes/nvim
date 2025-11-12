@@ -33,6 +33,7 @@ require("lazy").setup({
 
     -- nvim-lspconfig
 
+
     {
       "neovim/nvim-lspconfig",
       dependencies = { "saghen/blink.cmp" },
@@ -125,6 +126,42 @@ require("lazy").setup({
           cmd = { "clangd" },
           filetypes = { "c", "cpp", "objc", "objcpp" },
           init_options = { clangdFileStatus = true, semanticHighlighting = true },
+        })
+
+        -- HTML
+        setup_server("html", {
+          filetypes = { "html" },
+          init_options = {
+            provideFormatter = true,
+          },
+        })
+
+        -- CSS
+        setup_server("cssls", {
+          filetypes = { "css", "scss", "less" },
+          settings = {
+            css = { validate = true },
+            scss = { validate = true },
+            less = { validate = true },
+          },
+        })
+
+        -- JavaScript / TypeScript
+        setup_server("ts_ls", { -- if you have typescript-language-server installed
+          filetypes = {
+            "javascript",
+            "javascriptreact",
+            "typescript",
+            "typescriptreact",
+            "vue",
+          },
+          root_dir = function(fname)
+            return require("lspconfig.util").root_pattern("tsconfig.json", "package.json", "jsconfig.json", ".git")(fname)
+          end,
+          settings = {
+            typescript = { inlayHints = { includeInlayParameterNameHints = "all" } },
+            javascript = { inlayHints = { includeInlayParameterNameHints = "all" } },
+          },
         })
       end,
     },
