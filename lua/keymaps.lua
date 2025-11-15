@@ -31,6 +31,9 @@ vim.keymap.set('n', '<C-Left>', ':vertical resize -2<CR>', opts)
 vim.keymap.set('n', '<C-Right>', ':vertical resize +2<CR>', opts)
 
 
+-- Swap 'a' and 'i'
+vim.keymap.set("n", "a", "i", { noremap = true })
+vim.keymap.set("n", "i", "a", { noremap = true })
 
 -----------------
 -- Visual mode --
