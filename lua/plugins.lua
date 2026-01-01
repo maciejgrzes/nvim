@@ -173,6 +173,13 @@ require("lazy").setup({
           cmd = { "jdtls" },
           root_dir = require("lspconfig.util").root_pattern("pom.xml", "build.gradle", ".git"),
         })
+
+        -- JSON
+        setup_server("jsonls", {
+          filetypes = { "json", "jsonc" },
+          cmd = { "vscode-json-languageserver", "--stdio" },
+          root_dir = require("lspconfig.util").root_pattern(".git"),
+        })
       end,
     },
 
@@ -276,6 +283,11 @@ require("lazy").setup({
       config = function()
         require("neo-tree").setup({
           filesystem = {
+            filtered_items = {
+                visible = true,
+                hide_dotfiles = false,
+                hide_gitignored = false,
+            },
             follow_current_file = true,
             hijack_netrw_behavior = "open_default",
           },
