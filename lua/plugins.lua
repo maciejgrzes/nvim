@@ -100,8 +100,6 @@ require("lazy").setup({
         })
 
         -- Servers
-        
-            
         -- LUA
         setup_server("lua_ls", {
           settings = {
@@ -111,7 +109,6 @@ require("lazy").setup({
             },
           },
         })
-        
         -- PYTHON
         setup_server("pylsp", {
           settings = {
@@ -123,7 +120,6 @@ require("lazy").setup({
             },
           },
         })
-    
         -- C/C++
         setup_server("clangd", {
           cmd = { "clangd" },
@@ -150,7 +146,7 @@ require("lazy").setup({
         })
 
         -- JavaScript / TypeScript
-        setup_server("ts_ls", { -- if you have typescript-language-server installed
+        setup_server("ts_ls", {
           filetypes = {
             "javascript",
             "javascriptreact",
