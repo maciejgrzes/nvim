@@ -32,8 +32,6 @@ require("lazy").setup({
     },
 
     -- nvim-lspconfig
-
-
     {
       "neovim/nvim-lspconfig",
       dependencies = { "saghen/blink.cmp" },
@@ -102,6 +100,9 @@ require("lazy").setup({
         })
 
         -- Servers
+        
+            
+        -- LUA
         setup_server("lua_ls", {
           settings = {
             Lua = {
@@ -110,7 +111,8 @@ require("lazy").setup({
             },
           },
         })
-
+        
+        -- PYTHON
         setup_server("pylsp", {
           settings = {
             pylsp = {
@@ -121,7 +123,8 @@ require("lazy").setup({
             },
           },
         })
-
+    
+        -- C/C++
         setup_server("clangd", {
           cmd = { "clangd" },
           filetypes = { "c", "cpp", "objc", "objcpp" },
@@ -162,6 +165,13 @@ require("lazy").setup({
             typescript = { inlayHints = { includeInlayParameterNameHints = "all" } },
             javascript = { inlayHints = { includeInlayParameterNameHints = "all" } },
           },
+        })
+
+        -- JAVA
+        setup_server("jdtls", {
+          filetypes = { "java" },
+          cmd = { "jdtls" },
+          root_dir = require("lspconfig.util").root_pattern("pom.xml", "build.gradle", ".git"),
         })
       end,
     },
@@ -251,6 +261,27 @@ require("lazy").setup({
       "numToStr/Comment.nvim",
       config = function()
         require("Comment").setup()
+      end,
+    },
+
+    -- file explorer
+    {
+      "nvim-neo-tree/neo-tree.nvim",
+      branch = "v3.x",
+      dependencies = {
+        "nvim-lua/plenary.nvim",
+        "nvim-tree/nvim-web-devicons",
+        "MunifTanjim/nui.nvim",
+      },
+      config = function()
+        require("neo-tree").setup({
+          filesystem = {
+            follow_current_file = true,
+            hijack_netrw_behavior = "open_default",
+          },
+        })
+
+        vim.keymap.set("n", "<leader>e", ":Neotree toggle<CR>")
       end,
     },
 })
