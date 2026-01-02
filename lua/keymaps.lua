@@ -57,3 +57,10 @@ map("o", "i", "k", opts)
 map("o", "j", "h", opts)
 map("o", "k", "j", opts)
 map("o", "l", "l", opts)
+
+
+-------------------
+-- Terminal mode --
+-------------------
+
+map("t", "<Esc>", [[<C-\><C-n>]])
