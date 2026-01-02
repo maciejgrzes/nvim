@@ -18,6 +18,10 @@ map({'n', 'v', 's', 'o'}, ';', ':', opts)
 -- Normal mode --
 -----------------
 
+-- Terminal
+map("n", "<leader>t", ":split | terminal<CR>")
+map("n", "<leader>vt", ":vsplit | terminal<CR>")
+
 -- Better window navigation
 map('n', '<C-j>', '<C-w>h', opts)
 map('n', '<C-k>', '<C-w>j', opts)
