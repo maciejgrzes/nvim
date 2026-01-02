@@ -4,37 +4,56 @@ local opts = {
     silent = true,
 }
 
+local map = vim.keymap.set
+
 ---------------
 -- All modes --
 ---------------
 
 -- easy commands
-vim.keymap.set({'n', 'v', 's', 'o'}, ';', ':', opts)
+map({'n', 'v', 's', 'o'}, ';', ':', opts)
 
 
 -----------------
 -- Normal mode --
 -----------------
 
--- Hint: see `:h vim.map.set()`
 -- Better window navigation
-vim.keymap.set('n', '<C-h>', '<C-w>h', opts)
-vim.keymap.set('n', '<C-j>', '<C-w>j', opts)
-vim.keymap.set('n', '<C-k>', '<C-w>k', opts)
-vim.keymap.set('n', '<C-l>', '<C-w>l', opts)
+map('n', '<C-h>', '<C-w>h', opts)
+map('n', '<C-j>', '<C-w>j', opts)
+map('n', '<C-k>', '<C-w>k', opts)
+map('n', '<C-l>', '<C-w>l', opts)
 
 -- Resize with arrows
 -- delta: 2 lines
-vim.keymap.set('n', '<C-Up>', ':resize -2<CR>', opts)
-vim.keymap.set('n', '<C-Down>', ':resize +2<CR>', opts)
-vim.keymap.set('n', '<C-Left>', ':vertical resize -2<CR>', opts)
-vim.keymap.set('n', '<C-Right>', ':vertical resize +2<CR>', opts)
+map('n', '<C-Up>', ':resize -2<CR>', opts)
+map('n', '<C-Down>', ':resize +2<CR>', opts)
+map('n', '<C-Left>', ':vertical resize -2<CR>', opts)
+map('n', '<C-Right>', ':vertical resize +2<CR>', opts)
 
+map('n', 'h', 'i', opts)
+-- arrow like hjkl
+map("n", "i", "k", opts) -- up
+map("n", "j", "h", opts) -- left
+map("n", "k", "j", opts) -- down
 
 -----------------
 -- Visual mode --
 -----------------
 
--- Hint: start visual mode with the same area as the previous area and the same mode
-vim.keymap.set('v', '<', '<gv', opts)
-vim.keymap.set('v', '>', '>gv', opts)
+map('v', '<', '<gv', opts)
+map('v', '>', '>gv', opts)
+
+map("v", "i", "k", opts)
+map("v", "j", "h", opts)
+map("v", "k", "j", opts)
+map("v", "l", "l", opts)
+
+---------------------------
+-- Operator pending mode --
+---------------------------
+
+map("o", "i", "k", opts)
+map("o", "j", "h", opts)
+map("o", "k", "j", opts)
+map("o", "l", "l", opts)
