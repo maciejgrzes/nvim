@@ -278,6 +278,17 @@ require("lazy").setup({
       },
       config = function()
         require("neo-tree").setup({
+          window = {
+            mappings = {
+              ["i"] = "move_cursor_up",
+              ["j"] = "move_cursor_left",
+              ["k"] = "move_cursor_down",
+              ["l"] = "move_cursor_right",
+
+              -- Optional: remap file info (was 'i')
+              ["?"] = "show_file_details",
+            },
+          },
           filesystem = {
             filtered_items = {
                 visible = true,
