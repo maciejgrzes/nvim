@@ -204,18 +204,26 @@ require("lazy").setup({
 
     -- nvim-treesitter
     {
-    "nvim-treesitter/nvim-treesitter",
-    build = ":TSUpdate",
-    config = function()
-      local configs = require("nvim-treesitter.configs")
-
-      configs.setup({
-        ensure_installed = { "c", "lua", "vim", "python" },
-        sync_install = false,
-        highlight = { enable = true },
-        indent = { enable = true },
-      })
-    end,
+      "nvim-treesitter/nvim-treesitter",
+      build = ":TSUpdate",
+      config = function()
+        require("nvim-treesitter").setup({
+          ensure_installed = {
+            "lua",
+            "c",
+            "cpp",
+            "python",
+            "javascript",
+            "java",
+          },
+          highlight = {
+            enable = true,
+          },
+          indent = {
+            enable = true,
+          },
+        })
+      end,
     },
 
     -- statusline
@@ -298,7 +306,7 @@ require("lazy").setup({
     -- tabs
     {
       "akinsho/bufferline.nvim",
-      tag = "*",
+      version = "*",
       dependencies = "nvim-tree/nvim-web-devicons",
       config = function()
         require("bufferline").setup({
@@ -316,7 +324,6 @@ require("lazy").setup({
             show_buffer_close_icons = true,
             enforce_regular_tabs = false,
             always_show_bufferline = true,
-            separator_style = "slant",
             diagnostics = "nvim_lsp",
             
             offsets = {
