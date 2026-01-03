@@ -30,10 +30,10 @@ map('n', '<C-Right>', '<C-w>l', opts) -- right
 
 -- Resize with arrows
 -- delta: 2 lines
-map('n', '<C-S-Up>', ':resize +2<CR>', opts)
-map('n', '<C-S-Down>', ':resize -2<CR>', opts)
-map('n', '<C-S-Left>', ':vertical resize +2<CR>', opts)
-map('n', '<C-S-Right>', ':vertical resize -2<CR>', opts)
+map('n', '<C-S-Up>', ':resize -2<CR>', opts)
+map('n', '<C-S-Down>', ':resize +2<CR>', opts)
+map('n', '<C-S-Left>', ':vertical resize -2<CR>', opts)
+map('n', '<C-S-Right>', ':vertical resize +2<CR>', opts)
 
 -----------------
 -- Visual mode --
