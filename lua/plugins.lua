@@ -9,6 +9,8 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
     lazypath,
   })
 end
+
+vim.opt.termguicolors = true
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
@@ -316,9 +318,17 @@ require("lazy").setup({
             always_show_bufferline = true,
             separator_style = "slant",
             diagnostics = "nvim_lsp",
+            
+            offsets = {
+              {
+                filetype = "neo-tree",
+                text = "Explorer",
+                highlight = "Directory",
+                text_align = "left",
+              },
+            },
           },
         })
-
-        end,
+      end,
     },
 })
