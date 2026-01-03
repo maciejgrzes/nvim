@@ -5,14 +5,14 @@ local opts = {
 }
 
 local map = vim.keymap.set
+local allModes = {'n', 'v', 's', 'o'}
 
 ---------------
 -- All modes --
 ---------------
 
 -- easy commands
-map({'n', 'v', 's', 'o'}, ';', ':', opts)
-
+map(allModes, ';', ':', opts)
 
 -----------------
 -- Normal mode --
@@ -23,17 +23,17 @@ map("n", "<leader>t", ":split | terminal<CR>")
 map("n", "<leader>vt", ":vsplit | terminal<CR>")
 
 -- Better window navigation
-map('n', '<C-j>', '<C-w>h', opts)
-map('n', '<C-k>', '<C-w>j', opts)
-map('n', '<C-i>', '<C-w>k', opts)
-map('n', '<C-l>', '<C-w>l', opts)
+map('n', '<C-Left>', '<C-w>h', opts) -- left
+map('n', '<C-Down>', '<C-w>j', opts) -- down
+map('n', '<C-Up>', '<C-w>k', opts) -- up
+map('n', '<C-Right>', '<C-w>l', opts) -- right
 
 -- Resize with arrows
 -- delta: 2 lines
-map('n', '<C-Up>', ':resize -2<CR>', opts)
-map('n', '<C-Down>', ':resize +2<CR>', opts)
-map('n', '<C-Left>', ':vertical resize -2<CR>', opts)
-map('n', '<C-Right>', ':vertical resize +2<CR>', opts)
+map('n', '<C-S-Up>', ':resize +2<CR>', opts)
+map('n', '<C-S-Down>', ':resize -2<CR>', opts)
+map('n', '<C-S-Left>', ':vertical resize +2<CR>', opts)
+map('n', '<C-S-Right>', ':vertical resize -2<CR>', opts)
 
 -----------------
 -- Visual mode --

@@ -292,4 +292,33 @@ require("lazy").setup({
         vim.keymap.set("n", "<leader>e", ":Neotree toggle<CR>")
       end,
     },
+
+    -- tabs
+    {
+      "akinsho/bufferline.nvim",
+      tag = "*",
+      dependencies = "nvim-tree/nvim-web-devicons",
+      config = function()
+        require("bufferline").setup({
+          options = {
+            numbers = "none",
+            close_command = "bdelete! %d",
+            right_mouse_command = "bdelete! %d",
+            left_mouse_command = "buffer %d",
+            middle_mouse_command = nil,
+            indicator = { style = "underline" },
+            buffer_close_icon = "",
+            modified_icon = "●",
+            show_close_icon = false,
+            show_buffer_icons = true,
+            show_buffer_close_icons = true,
+            enforce_regular_tabs = false,
+            always_show_bufferline = true,
+            separator_style = "slant",
+            diagnostics = "nvim_lsp",
+          },
+        })
+
+        end,
+    },
 })
